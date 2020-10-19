@@ -3,26 +3,118 @@ Description: Deploy Network and Security Groups for Project 1 - Outline of Resou
 # This should be all the basic sections needed in Project #1
 Resources:
   VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: Project1 VPC
 
   InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: Project1 IGW
 
   AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
 
   PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+        #Fn::Select:
+        #- '0'
+        #- Fn::GetAZs: ''
+      Tags:
+      - Key: Name
+        Value: PubSub1-Project1
 
   PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1b
+        #Fn::Select:
+        #- '1'
+        #- Fn::GetAZs: ''
+      Tags:
+      - Key: Name
+        Value: PubSub2-Project1
 
   PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: us-east-1a
+        #Fn::Select:
+        #- '0'
+        #- Fn::GetAZs: ''
+      Tags:
+      - Key: Name
+        Value: PriSub1-Project1
 
   PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: us-east-1b
+        #Fn::Select:
+        #- '1'
+        #- Fn::GetAZs: ''
+      Tags:
+      - Key: Name
+        Value: PriSub2-Project1
 
   PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: Public Route Table
 
   PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
 
   PublicSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PubSub1-Project1
+      RouteTableId:
+        Ref: PublicRouteTable
 
   PublicSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PubSub2-Project1
+      RouteTableId:
+        Ref: PublicRouteTable
 
   ALBSecurityGroup:
 

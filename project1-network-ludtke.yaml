@@ -16,7 +16,7 @@ Resources:
     Properties:
       Tags:
       - Key: Name
-        Value: Project1 IGW
+        Value: IGW-Project1
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -117,29 +117,55 @@ Resources:
         Ref: PublicRouteTable
 
   ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Allow all http traffic to load balancer
+      GroupName: ALBSG-Project1
+      SecurityGroupEgress: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      #Tags: 
+      #  - Name: ALBSG-Project1
+      VpcId: 
+        Ref: VPC
 
-  WebInstanceSecurityGroup:
+
+  WebInstanceSecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+        GroupId: !Ref ALBSecurityGroup
+        IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 
-Outputs:
+#Outputs:
 # This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
 # by another template
-  VPC:
-    Description: VPC
-    Value:
-      Ref: VPC
-    Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-VPCId"
-  PrivateSubnet1:
+#  VPC:
+#    Description: VPC
+#    Value:
+#      Ref: VPC
+#    Export:
+#      Name:
+#        Fn::Sub: "${AWS::StackName}-VPCId"
+#  PrivateSubnet1:
 
-  PrivateSubnet2:
+#  PrivateSubnet2:
 
-  PublicSubnet1:
+#  PublicSubnet1:
 
-  PublicSubnet2:
+#  PublicSubnet2:
 
-  WebInstanceSecurityGroup:
+#  WebInstanceSecurityGroup:
 
-  ALBSecurityGroup:
+#  ALBSecurityGroup:

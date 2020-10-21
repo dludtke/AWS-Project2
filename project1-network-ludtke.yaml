@@ -148,24 +148,70 @@ Resources:
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 
-#Outputs:
+Outputs:
 # This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
 # by another template
-#  VPC:
-#    Description: VPC
-#    Value:
-#      Ref: VPC
-#    Export:
-#      Name:
-#        Fn::Sub: "${AWS::StackName}-VPCId"
-#  PrivateSubnet1:
+  VPC:
+    Description: VPC
+    Value:
+      Ref: VPC
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-VPCId"
+  PrivateSubnet1:
+    Description: PrivateSubnet1
+    Value:
+      Fn::GetAtt:
+      - PrivateSubnet1
+      - AvailabilityZone
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-PriSub1"
 
-#  PrivateSubnet2:
+  PrivateSubnet2:
+    Description: PrivateSubnet2
+    Value:
+      Fn::GetAtt:
+      - PrivateSubnet2
+      - AvailabilityZone
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-PriSub2"
 
-#  PublicSubnet1:
+  PublicSubnet1:
+    Description: PublicSubnet1
+    Value:
+      Fn::GetAtt:
+      - PublicSubnet1
+      - AvailabilityZone
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-PubSub1"
 
-#  PublicSubnet2:
+  PublicSubnet2:
+    Description: PublicSubnet2
+    Value:
+      Fn::GetAtt:
+      - PublicSubnet2
+      - AvailabilityZone
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-PubSub2"
 
-#  WebInstanceSecurityGroup:
+  WebInstanceSecurityGroup:
+    Description: WebInstanceSecurityGroup
+    Value:
+      Fn::GetAtt:
+      - WebInstanceSecurityGroupIngress
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-WebInsSG"
 
-#  ALBSecurityGroup:
+  ALBSecurityGroup:
+    Description: LoadBalancerSecurityGroup
+    Value:
+      Fn::GetAtt:
+      - ALBSecurityGroup
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-ALBSG"

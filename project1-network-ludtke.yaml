@@ -104,7 +104,7 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId:
-        Ref: PubSub1-Project1
+        Ref: PublicSubnet1
       RouteTableId:
         Ref: PublicRouteTable
 
@@ -112,7 +112,7 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId:
-        Ref: PubSub2-Project1
+        Ref: PublicSubnet2
       RouteTableId:
         Ref: PublicRouteTable
 

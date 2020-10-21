@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy Network and Security Groups for Project 1 - Outline of Resources
+# This should be all the basic sections needed in Project #1
+Resources:
+  VPC:
+
+  InternetGateway:
+
+  AttachGateway:
+
+  PublicSubnet1:
+
+  PublicSubnet2:
+
+  PrivateSubnet1:
+
+  PrivateSubnet2:
+
+  PublicRouteTable:
+
+  PublicRoute:
+
+  PublicSubnetRouteTableAssociation1:
+
+  PublicSubnetRouteTableAssociation2:
+
+  ALBSecurityGroup:
+
+  WebInstanceSecurityGroup:
+
+  # Optional BastionSercurityGroup if you build a Bastion Host
+
+Outputs:
+# This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
+# by another template
+  VPC:
+    Description: VPC
+    Value:
+      Ref: VPC
+    Export:
+      Name:
+        Fn::Sub: "${AWS::StackName}-VPCId"
+  PrivateSubnet1:
+
+  PrivateSubnet2:
+
+  PublicSubnet1:
+
+  PublicSubnet2:
+
+  WebInstanceSecurityGroup:
+
+  ALBSecurityGroup:

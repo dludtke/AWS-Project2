@@ -1,0 +1,11 @@
+#don't delete snap-0ffdf62fb31cfd687
+
+#key name: project1
+#ami name: webserver
+#bucket name: awsproject1-ludtke
+
+#aws-admin dir is sync'ed with git and with s3
+
+#aws cloudformation create-stack --stack-name test --template-url s3bucketurl.yaml
+#elb sg has to be by ip - inbound tcp from 0.0.0.0/0, outbound is the same
+#web instance sg can be the more complicated form

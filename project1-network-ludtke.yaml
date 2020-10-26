@@ -1,5 +1,5 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploy Network and Security Groups for Project 1 - Outline of Resources
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy Network and Security Groups for Project 1
 # This should be all the basic sections needed in Project #1
 Resources:
   VPC:
@@ -158,6 +158,7 @@ Outputs:
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-VPCId"
+
   PrivateSubnet1:
     Description: PrivateSubnet1
     Value:

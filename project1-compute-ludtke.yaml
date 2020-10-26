@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy EC2 instances and ALB for Project 1
+
+Parameters:
+# Need to ask user for name of network stack
+  NetworkStackName:
+    Type: String
+    Description: Name of the CF template 1/network stack
+
+Resources:
+
+# Optional BastionHostInstance would go here
+
+  WebServerInstance1:
+
+# When you create these resources you'll need to reference values that were exported from stack #1
+# One example would be the Private Subnet ID for placing WebServerInstance1 on
+# This should look SOMETHING like this in my example from class:
+    SubnetId:
+      Fn::ImportValue:
+        Fn::Sub: "${NetworkStackName}-PvtSubnet1"
+    SecurityGroup:
+      Fn::ImportValue:
+        Fn::Sub: "${NetworkStackName}-WebSG"
+
+  WebServerInstance2:
+    SubnetId:
+      Fn::ImportValue:
+        Fn::Sub: "${NetworkStackName}-PvtSubnet2"
+
+  ALBListener:
+    Type: AWS::ElasticLoadBalncingV2::Listener
+    #no imports needed
+
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalncingV2::TargetGroup
+    Properties:
+      VpcId: 
+        Fn::ImportValue:
+          Fn::Sub: "${NetworkStackName}-VPCId"
+    #needs import for vpc id
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalncingV2::LoadBalancer
+    #needs import value of the alb sg id
+    #needs imports for both public subnets
+
+Outputs:
+# This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
+# by another template
+  ApplicationLoadBalancer:
+# Need the DNS/URL of the ApplicationLoadBalancer
+    Description: DNS Address
+    Value: 
+      Fn::GetAtt:
+        - ApplicationLoadBalancer
+        - DNSName

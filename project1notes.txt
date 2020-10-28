@@ -11,3 +11,5 @@
 #elb sg has to be by ip - inbound tcp from 0.0.0.0/0, outbound is the same
 #web instance sg can be the more complicated form
 #shouldn't need egress rules
+
+#aws s3 sync . s3://awsproject1-ludtke

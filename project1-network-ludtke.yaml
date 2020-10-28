@@ -89,7 +89,7 @@ Resources:
         Ref: VPC
       Tags:
       - Key: Name
-        Value: Public Route Table
+        Value: PubRT-Project1
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -136,15 +136,23 @@ Resources:
       VpcId: 
         Ref: VPC
 
+  WebInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Security group for web instances on private subnets
+      GroupName: WebInsSG-Project1
+      VpcId: 
+        Ref: VPC
 
   WebInstanceSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref ALBSecurityGroup
+        GroupId: 
+          Ref: WebInstanceSecurityGroup
         IpProtocol: tcp
         FromPort: 80
         ToPort: 80
-        SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt WebInstanceSecurityGroup.GroupId
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 
@@ -202,7 +210,7 @@ Outputs:
   WebInstanceSecurityGroup:
     Description: WebInstanceSecurityGroup
     Value:
-      Ref: WebInstanceSecurityGroupIngress
+      Ref: WebInstanceSecurityGroup
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-WebInsSG"

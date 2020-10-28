@@ -202,8 +202,7 @@ Outputs:
   WebInstanceSecurityGroup:
     Description: WebInstanceSecurityGroup
     Value:
-      Fn::GetAtt:
-      - WebInstanceSecurityGroupIngress
+      Ref: WebInstanceSecurityGroupIngress
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-WebInsSG"
@@ -213,6 +212,7 @@ Outputs:
     Value:
       Fn::GetAtt:
       - ALBSecurityGroup
+      - GroupId
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-ALBSG"

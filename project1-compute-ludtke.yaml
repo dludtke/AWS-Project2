@@ -4,8 +4,8 @@ Description: Deploy EC2 instances and ALB for Project 1
 Parameters:
 # Need to ask user for name of network stack
   NetworkStackName:
-    Type: AWS::EC2::Image::Id
-    Description: test-project1network-ludtke
+    Type: String
+    Description: Name of the network stack
 
 Resources:
 
@@ -19,32 +19,52 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-07eb8c4d4db8d4cb1"
+      InstanceType: t2.micro
       KeyName: "project1"
       SubnetId:
         Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-PrivateSubnet1"
+          Fn::Sub: "${NetworkStackName}-PrivateSubnet1"
       SecurityGroups:
         Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-WebInstanceSecurityGroupIngress"
+          Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroupIngress"
 
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-07eb8c4d4db8d4cb1"
+      InstanceType: t2.micro
       KeyName: "project1"
       SubnetId:
         Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-PrivateSubnet2"
+          Fn::Sub: "${NetworkStackName}-PrivateSubnet2"
       SecurityGroups:
         Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-WebInstanceSecurityGroupIngress"
+          Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroupIngress"
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - ALBSG: 
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-ALBSGId"
+      Subnets:
+        - PubSub1:
+          Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-PubSub1Id"
+      
+        - PubSub2: 
+          Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-PubSub2Id"
+      #needs import value of the alb sg id
+      #needs imports for both public subnets
 
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
         DefaultActions:
             - Type: accept
-        LoadBalancerArn: 
+        LoadBalancerArn: !Ref ApplicationLoadBalancer
         Port: 80
         Protocol: tcp
     #no imports needed
@@ -54,23 +74,10 @@ Resources:
     Properties:
       VpcId: 
         Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-VPCId"
+          Fn::Sub: "${NetworkStackName}-VPCId"
     #needs import for vpc id
 
-  ApplicationLoadBalancer:
-    Type: AWS::ElasticLoadBalncingV2::LoadBalancer
-    Properties:
-      ALBSG: 
-        Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-ALBSGId"
-      PubSub1: 
-        Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-PubSub1Id"
-      PubSub2: 
-        Fn::ImportValue:
-          Fn::Sub: "${test-project1network-ludtke}-PubSub2Id"
-    #needs import value of the alb sg id
-    #needs imports for both public subnets
+  
 
 Outputs:
 # This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use

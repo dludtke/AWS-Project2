@@ -8,8 +8,10 @@
 
 #aws cloudformation create-stack --stack-name test --template-url s3bucketurl.yaml
     #https://awsproject1-ludtke.s3.amazonaws.com/project1-network-ludtke.yaml
+    #https://awsproject1-ludtke.s3.amazonaws.com/project1-compute-ludtke.yaml
 #elb sg has to be by ip - inbound tcp from 0.0.0.0/0, outbound is the same
 #web instance sg can be the more complicated form
 #shouldn't need egress rules
 
 #aws s3 sync . s3://awsproject1-ludtke
+#aws cloudformation delete-stack --stack-name

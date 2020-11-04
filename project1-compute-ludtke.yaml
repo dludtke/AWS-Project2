@@ -14,7 +14,7 @@ Resources:
       SubnetId:
         Fn::ImportValue:
           Fn::Sub: "${NetworkStackName}-PriSub1"
-      SecurityGroups:
+      SecurityGroupIds:
         - Fn::ImportValue:
             Fn::Sub: "${NetworkStackName}-WebInsSG"
   WebServerInstance2:
@@ -26,17 +26,18 @@ Resources:
       SubnetId:
         Fn::ImportValue:
           Fn::Sub: "${NetworkStackName}-PriSub2"
-      SecurityGroups:
+      SecurityGroupIds:
         - Fn::ImportValue:
             Fn::Sub: "${NetworkStackName}-WebInsSG"
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-        - Type: accept
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Port: 80
-      Protocol: tcp
+      Protocol: HTTP
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:

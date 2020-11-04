@@ -140,7 +140,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties: 
       GroupDescription: Security group for web instances on private subnets
-      GroupName: WebInsSG-Project1
+      #GroupName: WebInsSG-Project1
       VpcId: 
         Ref: VPC
 
@@ -170,9 +170,7 @@ Outputs:
   PrivateSubnet1:
     Description: PrivateSubnet1
     Value:
-      Fn::GetAtt:
-      - PrivateSubnet1
-      - AvailabilityZone
+      Fn::GetAtt: [ PrivateSubnet1, subnetId ]
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-PriSub1"

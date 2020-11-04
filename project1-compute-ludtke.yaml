@@ -1,21 +1,11 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy EC2 instances and ALB for Project 1
-
 Parameters:
-# Need to ask user for name of network stack
   NetworkStackName:
     Type: String
     Description: Name of the network stack
-
 Resources:
-
-# Optional BastionHostInstance would go here
-
   WebServerInstance1:
-
-# When you create these resources you'll need to reference values that were exported from stack #1
-# One example would be the Private Subnet ID for placing WebServerInstance1 on
-# This should look SOMETHING like this in my example from class:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-07eb8c4d4db8d4cb1"
@@ -23,11 +13,10 @@ Resources:
       KeyName: "project1"
       SubnetId:
         Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PrivateSubnet1"
+          Fn::Sub: "${NetworkStackName}-PriSub1"
       SecurityGroups:
-        Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroupIngress"
-
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-WebInsSG"
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
@@ -36,54 +25,39 @@ Resources:
       KeyName: "project1"
       SubnetId:
         Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PrivateSubnet2"
+          Fn::Sub: "${NetworkStackName}-PriSub2"
       SecurityGroups:
-        Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroupIngress"
-
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-WebInsSG"
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: accept
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: tcp
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       SecurityGroups:
-        - ALBSG: 
-            Fn::ImportValue:
-              Fn::Sub: "${NetworkStackName}-ALBSGId"
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-ALBSG"
       Subnets:
-        - PubSub1:
-          Fn::ImportValue:
-            Fn::Sub: "${NetworkStackName}-PubSub1Id"
-      
-        - PubSub2: 
-          Fn::ImportValue:
-            Fn::Sub: "${NetworkStackName}-PubSub2Id"
-      #needs import value of the alb sg id
-      #needs imports for both public subnets
-
-  ALBListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-        DefaultActions:
-            - Type: accept
-        LoadBalancerArn: !Ref ApplicationLoadBalancer
-        Port: 80
-        Protocol: tcp
-    #no imports needed
-
+        - Fn::ImportValue: 
+            Fn::Sub: "${NetworkStackName}-PubSub1"
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-PubSub2"
   ALBTargetGroup:
-    Type: AWS::ElasticLoadBalncingV2::TargetGroup
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
+      Port: 80
+      Protocol: HTTP
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${NetworkStackName}-VPCId"
-    #needs import for vpc id
-
-  
-
 Outputs:
-# This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
-# by another template
   ApplicationLoadBalancer:
-# Need the DNS/URL of the ApplicationLoadBalancer
     Description: DNS Address
     Value: 
       Fn::GetAtt:

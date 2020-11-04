@@ -15,3 +15,7 @@
 
 #aws s3 sync . s3://awsproject1-ludtke
 #aws cloudformation delete-stack --stack-name
+
+#aws cloudformation create-stack --stack-name testcompute 
+#--template-url https://awsproject1-ludtke.s3.amazonaws.com/project1-compute-ludtke.yaml 
+#--parameters ParameterKey=NetworkStackName,ParameterValue=testnetwork

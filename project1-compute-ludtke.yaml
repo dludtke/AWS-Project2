@@ -11,24 +11,36 @@ Resources:
       ImageId: "ami-07eb8c4d4db8d4cb1"
       InstanceType: t2.micro
       KeyName: "project1"
-      SubnetId:
-        Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PriSub1"
-      SecurityGroupIds:
-        - Fn::ImportValue:
-            Fn::Sub: "${NetworkStackName}-WebInsSG"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-PriSub1"
+          GroupSet:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-WebInsSG"
+      #SecurityGroupIds:
+      #  - Fn::ImportValue:
+      #      Fn::Sub: "${NetworkStackName}-WebInsSG"
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-07eb8c4d4db8d4cb1"
       InstanceType: t2.micro
       KeyName: "project1"
-      SubnetId:
-        Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PriSub2"
-      SecurityGroupIds:
-        - Fn::ImportValue:
-            Fn::Sub: "${NetworkStackName}-WebInsSG"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-PriSub2"
+          GroupSet:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-WebInsSG"
+      #SecurityGroupIds:
+      #  - Fn::ImportValue:
+      #      Fn::Sub: "${NetworkStackName}-WebInsSG"
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -52,6 +64,11 @@ Resources:
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
+      Name: ALBTargetGroup
+      Targets:
+        - Id: !Ref WebServerInstance1
+        - Id: !Ref WebServerInstance2
+      TargetType: instance
       Port: 80
       Protocol: HTTP
       VpcId: 

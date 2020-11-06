@@ -9,7 +9,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
       - Key: Name
-        Value: Project1 VPC
+        Value: VPC-Project1
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -121,11 +121,6 @@ Resources:
     Properties: 
       GroupDescription: Allow all http traffic to load balancer
       GroupName: ALBSG-Project1
-      SecurityGroupEgress: 
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
       SecurityGroupIngress: 
         - IpProtocol: tcp
           FromPort: 80
@@ -145,14 +140,14 @@ Resources:
         Ref: VPC
 
   WebInstanceSecurityGroupIngress:
-    Type: 'AWS::EC2::SecurityGroupIngress'
+    Type: AWS::EC2::SecurityGroupIngress
     Properties:
         GroupId: 
           Ref: WebInstanceSecurityGroup
         IpProtocol: tcp
         FromPort: 80
         ToPort: 80
-        SourceSecurityGroupId: !GetAtt WebInstanceSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 

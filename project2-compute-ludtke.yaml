@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy EC2 instances and ALB for Project 2
+Parameters:
+  NetworkStackName:
+    Type: String
+    Description: Name of the network stack
+Resources:
+  WebServerInstance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-07eb8c4d4db8d4cb1"
+      InstanceType: t2.micro
+      KeyName: "project1"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-PriSub1"
+          GroupSet:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-WebInsSG"
+  WebServerInstance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-07eb8c4d4db8d4cb1"
+      InstanceType: t2.micro
+      KeyName: "project1"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-PriSub2"
+          GroupSet:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-WebInsSG"
+  NATinstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-0f498e123a72a0a36"
+      InstanceType: t2.micro
+      KeyName: "project1"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: "0"
+          SubnetId:
+            Fn::ImportValue:
+              Fn::Sub: "${NetworkStackName}-PubSub1"
+          GroupSet:
+            - Fn::ImportValue:
+                Fn::Sub: "${NetworkStackName}-NATSG"
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-ALBSG"
+      Subnets:
+        - Fn::ImportValue: 
+            Fn::Sub: "${NetworkStackName}-PubSub1"
+        - Fn::ImportValue:
+            Fn::Sub: "${NetworkStackName}-PubSub2"
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: ALBTargetGroup
+      Targets:
+        - Id: !Ref WebServerInstance1
+        - Id: !Ref WebServerInstance2
+      TargetType: instance
+      Port: 80
+      Protocol: HTTP
+      VpcId: 
+        Fn::ImportValue:
+          Fn::Sub: "${NetworkStackName}-VPCId"
+Outputs:
+  ApplicationLoadBalancer:
+    Description: DNS Address
+    Value: 
+      Fn::GetAtt:
+        - ApplicationLoadBalancer
+        - DNSName

@@ -1,0 +1,21 @@
+#don't delete snap-0ffdf62fb31cfd687
+
+#key name: project1
+#ami name: webserver
+#bucket name: awsproject1-ludtke
+
+#aws-admin dir is sync'ed with git and with s3
+
+#aws cloudformation create-stack --stack-name test --template-url s3bucketurl.yaml
+    #https://awsproject1-ludtke.s3.amazonaws.com/project1-network-ludtke.yaml
+    #https://awsproject1-ludtke.s3.amazonaws.com/project1-compute-ludtke.yaml
+#alb sg has to be by ip - inbound tcp from 0.0.0.0/0, outbound is the same
+#web instance sg can be the more complicated form
+#shouldn't need egress rules
+
+#aws s3 sync . s3://awsproject1-ludtke
+#aws cloudformation delete-stack --stack-name
+
+#aws cloudformation create-stack --stack-name testcompute 
+#--template-url https://awsproject1-ludtke.s3.amazonaws.com/project1-compute-ludtke.yaml 
+#--parameters ParameterKey=NetworkStackName,ParameterValue=testnetwork

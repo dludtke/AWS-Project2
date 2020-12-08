@@ -3,7 +3,7 @@ Description: Deploy EC2 instances and ALB for Project 2
 Parameters:
   NetworkStackName:
     Type: String
-    Description: Name of the network stack
+    Description: Name of the network stack as shared from the parent
 Resources:
   WebServerInstance1:
     Type: AWS::EC2::Instance
@@ -35,21 +35,7 @@ Resources:
           GroupSet:
             - Fn::ImportValue:
                 Fn::Sub: "${NetworkStackName}-WebInsSG"
-  NATInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: "ami-0f498e123a72a0a36"
-      InstanceType: t2.micro
-      KeyName: "project1"
-      NetworkInterfaces:
-        - AssociatePublicIpAddress: true
-          DeviceIndex: "0"
-          SubnetId:
-            Fn::ImportValue:
-              Fn::Sub: "${NetworkStackName}-PubSub1"
-          GroupSet:
-            - Fn::ImportValue:
-                Fn::Sub: "${NetworkStackName}-NATSG"
+  
   BastionHostInstance:
     Type: AWS::EC2::Instance
     Properties:

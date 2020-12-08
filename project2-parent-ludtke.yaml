@@ -1,22 +1,27 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Parent stack for the network and compute stacks in Project2
-
 Resources:
-  Network:
+  NetworkStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-network-ludtke.yaml
-      Parameters:
-  Compute:
+  ComputeStack:
     Type: AWS::CloudFormation::Stack
+    #DependsOn:
+    #  - "NetworkStack"
     Properties:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-compute-ludtke.yaml
       Parameters:
+        NetworkStackName: !GetAtt 
+        - NetworkStack
+        - Outputs.NetworkStackName
 
 Outputs:
-  StackRef:
-    Value: !Ref Network
-    Value: !Ref Compute
+  NetworkStackName:
+    Value: !Ref NetworkStack
+  ComputeStackName:
+    Value: !Ref ComputeStack
   OutputFromNestedStack:
-    Value: !GetAtt Network.Outputs.BucketName
-    Value: !GetAtt Compute.Outputs.BucketName
+    Value: !GetAtt 
+      NetworkStack.Outputs.awsproject1-ludtke
+      ComputeStack.Outputs.awsproject1-ludtke

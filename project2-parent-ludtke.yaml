@@ -7,14 +7,39 @@ Resources:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-network-ludtke.yaml
   ComputeStack:
     Type: AWS::CloudFormation::Stack
-    #DependsOn:
-    #  - "NetworkStack"
     Properties:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-compute-ludtke.yaml
       Parameters:
         NetworkStackName: !GetAtt 
         - NetworkStack
         - Outputs.NetworkStackName
+        VPC: !GetAtt 
+        - NetworkStack
+        - Outputs.VPC
+        PrivateSubnet1: !GetAtt 
+        - NetworkStack
+        - Outputs.PrivateSubnet1
+        PrivateSubnet2: !GetAtt 
+        - NetworkStack
+        - Outputs.PrivateSubnet2
+        PublicSubnet1: !GetAtt 
+        - NetworkStack
+        - Outputs.PublicSubnet1
+        PublicSubnet2: !GetAtt 
+        - NetworkStack
+        - Outputs.PublicSubnet2
+        WebInstanceSecurityGroup: !GetAtt 
+        - NetworkStack
+        - Outputs.WebInstanceSecurityGroup
+        ALBSecurityGroup: !GetAtt 
+        - NetworkStack
+        - Outputs.ALBSecurityGroup
+        NATSecurityGroup: !GetAtt 
+        - NetworkStack
+        - Outputs.NATSecurityGroup
+        BastionHostSecurityGroup: !GetAtt 
+        - NetworkStack
+        - Outputs.BastionHostSecurityGroup
 
 Outputs:
   NetworkStackName:

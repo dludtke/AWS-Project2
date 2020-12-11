@@ -1,11 +1,23 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy EC2 instances and ALB for Project 2
-#Parameters:
-#  NetworkStackName:
-#    Type: String
-#    Description: Name of the network stack as shared from the parent
-#  PrivateSubnet1:
-#    Type: String
+Parameters:
+  PrivateSubnet1:
+    Type: String
+  PrivateSubnet2:
+    Type: String
+  PublicSubnet1:
+    Type: String
+  PublicSubnet2:
+    Type: String
+  VPC: 
+    Type: String
+  WebInstanceSecurityGroup:
+    Type: String
+  BastionHostSecurityGroup:
+    Type: String
+  ALBSecurityGroup:
+    Type: String
+  
 Resources:
   WebServerInstance1:
     Type: AWS::EC2::Instance
@@ -16,10 +28,10 @@ Resources:
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
-          SubnetId:
-            Fn::ImportValue: "$PrivateSubnet1"
-          GroupSet:
-            - Fn::ImportValue: "$WebInstanceSecurityGroup"
+          SubnetId: !Ref PrivateSubnet1
+            #Fn::ImportValue: !Ref PrivateSubnet1
+          GroupSet: 
+            - !Ref WebInstanceSecurityGroup
                 #Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroup"
   WebServerInstance2:
     Type: AWS::EC2::Instance
@@ -30,11 +42,11 @@ Resources:
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
-          SubnetId:
-            Fn::ImportValue: "$PrivateSubnet2"
+          SubnetId: !Ref PrivateSubnet2
+            #Fn::ImportValue: !Ref PrivateSubnet2
               #Fn::Sub: "${NetworkStackName}-PrivateSubnet2"
           GroupSet:
-            - Fn::ImportValue: "$WebInstanceSecurityGroup"
+            - Fn::ImportValue: !Ref WebInstanceSecurityGroup
                 #Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroup"
   
   BastionHostInstance:
@@ -47,10 +59,10 @@ Resources:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
           SubnetId:
-            Fn::ImportValue: "$PublicSubnet2"
+            Fn::ImportValue: !Ref PublicSubnet2
               #Fn::Sub: "${NetworkStackName}-PublicSubnet2"
           GroupSet:
-            - Fn::ImportValue: "$BastionHostSecurityGroup"
+            - Fn::ImportValue: !Ref BastionHostSecurityGroup
                 #Fn::Sub: "${NetworkStackName}-BastionHostSecurityGroup"
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -65,12 +77,12 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       SecurityGroups:
-        - Fn::ImportValue: "$ALBSecurityGroup"
+        - Fn::ImportValue: !Ref ALBSecurityGroup
             #Fn::Sub: "${NetworkStackName}-ALBSecurityGroup"
       Subnets:
-        - Fn::ImportValue: "$PublicSubnet1"
+        - Fn::ImportValue: !Ref PublicSubnet1
             #Fn::Sub: "${NetworkStackName}-PublicSubnet1"
-        - Fn::ImportValue: "$PublicSubnet2"
+        - Fn::ImportValue: !Ref PublicSubnet2
             #Fn::Sub: "${NetworkStackName}-PublicSubnet2"
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -83,7 +95,7 @@ Resources:
       Port: 80
       Protocol: HTTP
       VpcId: 
-        Fn::ImportValue: "$VPC"
+        Fn::ImportValue: !Ref VPC
           #Fn::Sub: "${NetworkStackName}-VPC"
 Outputs:
   ApplicationLoadBalancer:

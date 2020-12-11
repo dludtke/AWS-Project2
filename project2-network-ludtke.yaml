@@ -245,7 +245,9 @@ Outputs:
     Value: !Ref PublicSubnet2
   WebInstanceSecurityGroup:
     Description: Web Instance Security Group for Project2
-    Value: !Ref WebInstanceSecurityGroup
+    Value: !GetAtt 
+    - WebInstanceSecurityGroup
+    - GroupId
   ALBSecurityGroup:
     Description: Load Balancer Security Group for Project2
     Value: !GetAtt

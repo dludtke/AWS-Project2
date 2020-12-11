@@ -29,10 +29,8 @@ Resources:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
           SubnetId: !Ref PrivateSubnet1
-            #Fn::ImportValue: !Ref PrivateSubnet1
           GroupSet: 
             - !Ref WebInstanceSecurityGroup
-                #Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroup"
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
@@ -43,11 +41,8 @@ Resources:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
           SubnetId: !Ref PrivateSubnet2
-            #Fn::ImportValue: !Ref PrivateSubnet2
-              #Fn::Sub: "${NetworkStackName}-PrivateSubnet2"
           GroupSet:
-            - Fn::ImportValue: !Ref WebInstanceSecurityGroup
-                #Fn::Sub: "${NetworkStackName}-WebInstanceSecurityGroup"
+            - !Ref WebInstanceSecurityGroup
   
   BastionHostInstance:
     Type: AWS::EC2::Instance
@@ -58,12 +53,10 @@ Resources:
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           DeviceIndex: "0"
-          SubnetId:
-            Fn::ImportValue: !Ref PublicSubnet2
-              #Fn::Sub: "${NetworkStackName}-PublicSubnet2"
+          SubnetId: !Ref PublicSubnet2
           GroupSet:
-            - Fn::ImportValue: !Ref BastionHostSecurityGroup
-                #Fn::Sub: "${NetworkStackName}-BastionHostSecurityGroup"
+            - !Ref BastionHostSecurityGroup
+
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -77,13 +70,10 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       SecurityGroups:
-        - Fn::ImportValue: !Ref ALBSecurityGroup
-            #Fn::Sub: "${NetworkStackName}-ALBSecurityGroup"
+        - !Ref ALBSecurityGroup
       Subnets:
-        - Fn::ImportValue: !Ref PublicSubnet1
-            #Fn::Sub: "${NetworkStackName}-PublicSubnet1"
-        - Fn::ImportValue: !Ref PublicSubnet2
-            #Fn::Sub: "${NetworkStackName}-PublicSubnet2"
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -94,12 +84,13 @@ Resources:
       TargetType: instance
       Port: 80
       Protocol: HTTP
-      VpcId: 
-        Fn::ImportValue: !Ref VPC
-          #Fn::Sub: "${NetworkStackName}-VPC"
+      VpcId: !Ref VPC
 Outputs:
   ApplicationLoadBalancer:
     Description: DNS Address
     Value: !GetAtt
     - ApplicationLoadBalancer
     - DNSName
+  ComputeStackName:
+    Description: Name of the compute stack
+    Value: ComputeStack

@@ -265,4 +265,4 @@ Outputs:
     - GroupId
   NetworkStackName:
     Description: Name of the network stack as determined by the parent
-    Value: NetworkStackName
+    Value: NetworkStack

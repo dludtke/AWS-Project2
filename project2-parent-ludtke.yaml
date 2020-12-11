@@ -7,7 +7,6 @@ Resources:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-network-ludtke.yaml
   ComputeStack:
     Type: AWS::CloudFormation::Stack
-    #DependsOn: NetworkStack
     Properties:
       TemplateURL: https://awsproject1-ludtke.s3.amazonaws.com/project2-compute-ludtke.yaml
       Parameters:
@@ -47,7 +46,11 @@ Outputs:
     Value: !Ref NetworkStack
   ComputeStackName:
     Value: !Ref ComputeStack
-  OutputFromNestedStack:
+  OutputFromNetworkStack:
     Value: !GetAtt 
-      NetworkStack.Outputs.awsproject1-ludtke
-      ComputeStack.Outputs.awsproject1-ludtke
+    - NetworkStack
+    - Outputs.NetworkStack
+  OutputFromComputeStack:
+    Value: !GetAtt 
+    - ComputeStack
+    - Outputs.ComputeStack
